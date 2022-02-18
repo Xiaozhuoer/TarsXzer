@@ -1,0 +1,11 @@
+
+module TestApp
+{
+
+interface Xzer
+{
+    int test();
+    string handleHello(string str);
+};
+
+}; 
