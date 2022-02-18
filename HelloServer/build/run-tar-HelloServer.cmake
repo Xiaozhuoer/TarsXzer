@@ -1,7 +1,0 @@
-EXECUTE_PROCESS(COMMAND /usr/bin/cmake -E echo mkdir -p /usr/local/tars/xzer/HelloServer/build/tmp/HelloServer)
-EXECUTE_PROCESS(COMMAND /usr/bin/cmake -E echo rm -rf /usr/local/tars/xzer/HelloServer/build/tmp/HelloServer)
-EXECUTE_PROCESS(COMMAND /usr/bin/cmake -E make_directory /usr/local/tars/xzer/HelloServer/build/tmp/HelloServer)
-EXECUTE_PROCESS(COMMAND /usr/bin/cmake -E echo copy bin/HelloServer /usr/local/tars/xzer/HelloServer/build/tmp/HelloServer/)
-EXECUTE_PROCESS(COMMAND /usr/bin/cmake -E copy bin/HelloServer /usr/local/tars/xzer/HelloServer/build/tmp/HelloServer/)
-EXECUTE_PROCESS(COMMAND /usr/bin/cmake -E chdir /usr/local/tars/xzer/HelloServer/build/tmp/ tar czfv HelloServer.tgz HelloServer)
-EXECUTE_PROCESS(COMMAND /usr/bin/cmake -E copy_if_different /usr/local/tars/xzer/HelloServer/build/tmp/HelloServer.tgz /usr/local/tars/xzer/HelloServer/build/HelloServer.tgz)

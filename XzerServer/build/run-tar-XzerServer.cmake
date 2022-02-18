@@ -1,7 +1,0 @@
-EXECUTE_PROCESS(COMMAND /usr/bin/cmake -E echo mkdir -p /usr/local/tars/xzer/XzerServer/build/tmp/XzerServer)
-EXECUTE_PROCESS(COMMAND /usr/bin/cmake -E echo rm -rf /usr/local/tars/xzer/XzerServer/build/tmp/XzerServer)
-EXECUTE_PROCESS(COMMAND /usr/bin/cmake -E make_directory /usr/local/tars/xzer/XzerServer/build/tmp/XzerServer)
-EXECUTE_PROCESS(COMMAND /usr/bin/cmake -E echo copy bin/XzerServer /usr/local/tars/xzer/XzerServer/build/tmp/XzerServer/)
-EXECUTE_PROCESS(COMMAND /usr/bin/cmake -E copy bin/XzerServer /usr/local/tars/xzer/XzerServer/build/tmp/XzerServer/)
-EXECUTE_PROCESS(COMMAND /usr/bin/cmake -E chdir /usr/local/tars/xzer/XzerServer/build/tmp/ tar czfv XzerServer.tgz XzerServer)
-EXECUTE_PROCESS(COMMAND /usr/bin/cmake -E copy_if_different /usr/local/tars/xzer/XzerServer/build/tmp/XzerServer.tgz /usr/local/tars/xzer/XzerServer/build/XzerServer.tgz)
