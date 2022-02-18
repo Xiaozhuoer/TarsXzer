@@ -32,8 +32,7 @@ public:
      *
      */
     virtual int test(tars::TarsCurrentPtr current) { return 0;}
-    void  syncTestCall();
-    std::string handleHello(const std::string &str, tars::TarsCurrentPtr current);
+    virtual int handleHello(const std::string &str, std::string &name ,tars::TarsCurrentPtr current);
 
 private:
     HelloPrx _hPrx;

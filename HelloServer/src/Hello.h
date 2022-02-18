@@ -26,16 +26,6 @@ namespace TestApp
     {
     public:
         virtual ~HelloPrxCallback(){}
-        virtual void callback_handleXzer()
-        { throw std::runtime_error("callback_handleXzer() override incorrect."); }
-        virtual void callback_handleXzer_exception(tars::Int32 ret)
-        { throw std::runtime_error("callback_handleXzer_exception() override incorrect."); }
-
-        virtual void callback_sayHello(tars::Int32 ret)
-        { throw std::runtime_error("callback_sayHello() override incorrect."); }
-        virtual void callback_sayHello_exception(tars::Int32 ret)
-        { throw std::runtime_error("callback_sayHello_exception() override incorrect."); }
-
         virtual void callback_test(tars::Int32 ret)
         { throw std::runtime_error("callback_test() override incorrect."); }
         virtual void callback_test_exception(tars::Int32 ret)
@@ -59,99 +49,13 @@ namespace TestApp
         {
             static ::std::string __Hello_all[]=
             {
-                "handleXzer",
-                "sayHello",
                 "test"
             };
-            pair<string*, string*> r = equal_range(__Hello_all, __Hello_all+3, string(msg->request.sFuncName));
+            pair<string*, string*> r = equal_range(__Hello_all, __Hello_all+1, string(msg->request.sFuncName));
             if(r.first == r.second) return tars::TARSSERVERNOFUNCERR;
             switch(r.first - __Hello_all)
             {
                 case 0:
-                {
-                    if (msg->response->iRet != tars::TARSSERVERSUCCESS)
-                    {
-                        callback_handleXzer_exception(msg->response->iRet);
-
-                        return msg->response->iRet;
-                    }
-                    tars::TarsInputStream<tars::BufferReader> _is;
-
-                    _is.setBuffer(msg->response->sBuffer);
-                    ServantProxyThreadData *pSptd = ServantProxyThreadData::getData();
-                    if (pSptd && pSptd->_traceCall)
-                    {
-                        string _trace_param_;
-                        int _trace_param_flag_ = pSptd->needTraceParam(ServantProxyThreadData::TraceContext::EST_CR, _is.size());
-                        if (ServantProxyThreadData::TraceContext::ENP_NORMAL == _trace_param_flag_)
-                        {
-                            tars::JsonValueObjPtr _p_ = new tars::JsonValueObj();
-                            _trace_param_ = tars::TC_Json::writeValue(_p_);
-                        }
-                        else if(ServantProxyThreadData::TraceContext::ENP_OVERMAXLEN == _trace_param_flag_)
-                        {
-                            _trace_param_ = "{\"trace_param_over_max_len\":true}";
-                        }
-                        TARS_TRACE(pSptd->getTraceKey(ServantProxyThreadData::TraceContext::EST_CR), TRACE_ANNOTATION_CR, "", ServerConfig::Application + "." + ServerConfig::ServerName, "handleXzer", 0, _trace_param_, "");
-                    }
-
-                    CallbackThreadData * pCbtd = CallbackThreadData::getData();
-                    assert(pCbtd != NULL);
-
-                    pCbtd->setResponseContext(msg->response->context);
-
-                    callback_handleXzer();
-
-                    pCbtd->delResponseContext();
-
-                    return tars::TARSSERVERSUCCESS;
-
-                }
-                case 1:
-                {
-                    if (msg->response->iRet != tars::TARSSERVERSUCCESS)
-                    {
-                        callback_sayHello_exception(msg->response->iRet);
-
-                        return msg->response->iRet;
-                    }
-                    tars::TarsInputStream<tars::BufferReader> _is;
-
-                    _is.setBuffer(msg->response->sBuffer);
-                    tars::Int32 _ret;
-                    _is.read(_ret, 0, true);
-
-                    ServantProxyThreadData *pSptd = ServantProxyThreadData::getData();
-                    if (pSptd && pSptd->_traceCall)
-                    {
-                        string _trace_param_;
-                        int _trace_param_flag_ = pSptd->needTraceParam(ServantProxyThreadData::TraceContext::EST_CR, _is.size());
-                        if (ServantProxyThreadData::TraceContext::ENP_NORMAL == _trace_param_flag_)
-                        {
-                            tars::JsonValueObjPtr _p_ = new tars::JsonValueObj();
-                            _p_->value[""] = tars::JsonOutput::writeJson(_ret);
-                            _trace_param_ = tars::TC_Json::writeValue(_p_);
-                        }
-                        else if(ServantProxyThreadData::TraceContext::ENP_OVERMAXLEN == _trace_param_flag_)
-                        {
-                            _trace_param_ = "{\"trace_param_over_max_len\":true}";
-                        }
-                        TARS_TRACE(pSptd->getTraceKey(ServantProxyThreadData::TraceContext::EST_CR), TRACE_ANNOTATION_CR, "", ServerConfig::Application + "." + ServerConfig::ServerName, "sayHello", 0, _trace_param_, "");
-                    }
-
-                    CallbackThreadData * pCbtd = CallbackThreadData::getData();
-                    assert(pCbtd != NULL);
-
-                    pCbtd->setResponseContext(msg->response->context);
-
-                    callback_sayHello(_ret);
-
-                    pCbtd->delResponseContext();
-
-                    return tars::TARSSERVERSUCCESS;
-
-                }
-                case 2:
                 {
                     if (msg->response->iRet != tars::TARSSERVERSUCCESS)
                     {
@@ -208,63 +112,6 @@ namespace TestApp
     public:
         virtual ~HelloPrxCallbackPromise(){}
     public:
-        struct PromisehandleXzer: virtual public TC_HandleBase
-        {
-        public:
-            map<std::string, std::string> _mRspContext;
-        };
-        
-        typedef tars::TC_AutoPtr< HelloPrxCallbackPromise::PromisehandleXzer > PromisehandleXzerPtr;
-
-        HelloPrxCallbackPromise(const tars::Promise< HelloPrxCallbackPromise::PromisehandleXzerPtr > &promise)
-        : _promise_handleXzer(promise)
-        {}
-        
-        virtual void callback_handleXzer(const HelloPrxCallbackPromise::PromisehandleXzerPtr &ptr)
-        {
-            _promise_handleXzer.setValue(ptr);
-        }
-        virtual void callback_handleXzer_exception(tars::Int32 ret)
-        {
-            std::string str("");
-            str += "Function:handleXzer_exception|Ret:";
-            str += TC_Common::tostr(ret);
-            _promise_handleXzer.setException(tars::copyException(str, ret));
-        }
-
-    protected:
-        tars::Promise< HelloPrxCallbackPromise::PromisehandleXzerPtr > _promise_handleXzer;
-
-    public:
-        struct PromisesayHello: virtual public TC_HandleBase
-        {
-        public:
-            tars::Int32 _ret;
-            map<std::string, std::string> _mRspContext;
-        };
-        
-        typedef tars::TC_AutoPtr< HelloPrxCallbackPromise::PromisesayHello > PromisesayHelloPtr;
-
-        HelloPrxCallbackPromise(const tars::Promise< HelloPrxCallbackPromise::PromisesayHelloPtr > &promise)
-        : _promise_sayHello(promise)
-        {}
-        
-        virtual void callback_sayHello(const HelloPrxCallbackPromise::PromisesayHelloPtr &ptr)
-        {
-            _promise_sayHello.setValue(ptr);
-        }
-        virtual void callback_sayHello_exception(tars::Int32 ret)
-        {
-            std::string str("");
-            str += "Function:sayHello_exception|Ret:";
-            str += TC_Common::tostr(ret);
-            _promise_sayHello.setException(tars::copyException(str, ret));
-        }
-
-    protected:
-        tars::Promise< HelloPrxCallbackPromise::PromisesayHelloPtr > _promise_sayHello;
-
-    public:
         struct Promisetest: virtual public TC_HandleBase
         {
         public:
@@ -298,92 +145,14 @@ namespace TestApp
         {
             static ::std::string __Hello_all[]=
             {
-                "handleXzer",
-                "sayHello",
                 "test"
             };
 
-            pair<string*, string*> r = equal_range(__Hello_all, __Hello_all+3, string(msg->request.sFuncName));
+            pair<string*, string*> r = equal_range(__Hello_all, __Hello_all+1, string(msg->request.sFuncName));
             if(r.first == r.second) return tars::TARSSERVERNOFUNCERR;
             switch(r.first - __Hello_all)
             {
                 case 0:
-                {
-                    if (msg->response->iRet != tars::TARSSERVERSUCCESS)
-                    {
-                        callback_handleXzer_exception(msg->response->iRet);
-
-                        return msg->response->iRet;
-                    }
-                    tars::TarsInputStream<tars::BufferReader> _is;
-
-                    _is.setBuffer(msg->response->sBuffer);
-
-                    HelloPrxCallbackPromise::PromisehandleXzerPtr ptr = new HelloPrxCallbackPromise::PromisehandleXzer();
-
-                    try
-                    {
-                    }
-                    catch(std::exception &ex)
-                    {
-                        callback_handleXzer_exception(tars::TARSCLIENTDECODEERR);
-
-                        return tars::TARSCLIENTDECODEERR;
-                    }
-                    catch(...)
-                    {
-                        callback_handleXzer_exception(tars::TARSCLIENTDECODEERR);
-
-                        return tars::TARSCLIENTDECODEERR;
-                    }
-
-                    ptr->_mRspContext = msg->response->context;
-
-                    callback_handleXzer(ptr);
-
-                    return tars::TARSSERVERSUCCESS;
-
-                }
-                case 1:
-                {
-                    if (msg->response->iRet != tars::TARSSERVERSUCCESS)
-                    {
-                        callback_sayHello_exception(msg->response->iRet);
-
-                        return msg->response->iRet;
-                    }
-                    tars::TarsInputStream<tars::BufferReader> _is;
-
-                    _is.setBuffer(msg->response->sBuffer);
-
-                    HelloPrxCallbackPromise::PromisesayHelloPtr ptr = new HelloPrxCallbackPromise::PromisesayHello();
-
-                    try
-                    {
-                        _is.read(ptr->_ret, 0, true);
-
-                    }
-                    catch(std::exception &ex)
-                    {
-                        callback_sayHello_exception(tars::TARSCLIENTDECODEERR);
-
-                        return tars::TARSCLIENTDECODEERR;
-                    }
-                    catch(...)
-                    {
-                        callback_sayHello_exception(tars::TARSCLIENTDECODEERR);
-
-                        return tars::TARSCLIENTDECODEERR;
-                    }
-
-                    ptr->_mRspContext = msg->response->context;
-
-                    callback_sayHello(ptr);
-
-                    return tars::TARSSERVERSUCCESS;
-
-                }
-                case 2:
                 {
                     if (msg->response->iRet != tars::TARSSERVERSUCCESS)
                     {
@@ -444,87 +213,14 @@ namespace TestApp
         {
             static ::std::string __Hello_all[]=
             {
-                "handleXzer",
-                "sayHello",
                 "test"
             };
 
-            pair<string*, string*> r = equal_range(__Hello_all, __Hello_all+3, string(msg->request.sFuncName));
+            pair<string*, string*> r = equal_range(__Hello_all, __Hello_all+1, string(msg->request.sFuncName));
             if(r.first == r.second) return tars::TARSSERVERNOFUNCERR;
             switch(r.first - __Hello_all)
             {
                 case 0:
-                {
-                    if (msg->response->iRet != tars::TARSSERVERSUCCESS)
-                    {
-                        callback_handleXzer_exception(msg->response->iRet);
-
-                        return msg->response->iRet;
-                    }
-                    tars::TarsInputStream<tars::BufferReader> _is;
-
-                    _is.setBuffer(msg->response->sBuffer);
-                    try
-                    {
-                        setResponseContext(msg->response->context);
-
-                        callback_handleXzer();
-
-                    }
-                    catch(std::exception &ex)
-                    {
-                        callback_handleXzer_exception(tars::TARSCLIENTDECODEERR);
-
-                        return tars::TARSCLIENTDECODEERR;
-                    }
-                    catch(...)
-                    {
-                        callback_handleXzer_exception(tars::TARSCLIENTDECODEERR);
-
-                        return tars::TARSCLIENTDECODEERR;
-                    }
-
-                    return tars::TARSSERVERSUCCESS;
-
-                }
-                case 1:
-                {
-                    if (msg->response->iRet != tars::TARSSERVERSUCCESS)
-                    {
-                        callback_sayHello_exception(msg->response->iRet);
-
-                        return msg->response->iRet;
-                    }
-                    tars::TarsInputStream<tars::BufferReader> _is;
-
-                    _is.setBuffer(msg->response->sBuffer);
-                    try
-                    {
-                        tars::Int32 _ret;
-                        _is.read(_ret, 0, true);
-
-                        setResponseContext(msg->response->context);
-
-                        callback_sayHello(_ret);
-
-                    }
-                    catch(std::exception &ex)
-                    {
-                        callback_sayHello_exception(tars::TARSCLIENTDECODEERR);
-
-                        return tars::TARSCLIENTDECODEERR;
-                    }
-                    catch(...)
-                    {
-                        callback_sayHello_exception(tars::TARSCLIENTDECODEERR);
-
-                        return tars::TARSCLIENTDECODEERR;
-                    }
-
-                    return tars::TARSSERVERSUCCESS;
-
-                }
-                case 2:
                 {
                     if (msg->response->iRet != tars::TARSSERVERSUCCESS)
                     {
@@ -575,204 +271,6 @@ namespace TestApp
     {
     public:
         typedef map<string, string> TARS_CONTEXT;
-        void handleXzer(const std::string & str,const map<string, string> &context = TARS_CONTEXT(),map<string, string> * pResponseContext = NULL)
-        {
-            tars::TarsOutputStream<tars::BufferWriterVector> _os;
-            _os.write(str, 1);
-            ServantProxyThreadData *pSptd = ServantProxyThreadData::getData();
-            if (pSptd && pSptd->_traceCall)
-            {
-                pSptd->newSpan();
-                string _trace_param_;
-                int _trace_param_flag_ = pSptd->needTraceParam(ServantProxyThreadData::TraceContext::EST_CS, _os.getLength());
-                if (ServantProxyThreadData::TraceContext::ENP_NORMAL == _trace_param_flag_)
-                {
-                    tars::JsonValueObjPtr _p_ = new tars::JsonValueObj();
-                    _p_->value["str"] = tars::JsonOutput::writeJson(str);
-                    _trace_param_ = tars::TC_Json::writeValue(_p_);
-                }
-                else if(ServantProxyThreadData::TraceContext::ENP_OVERMAXLEN == _trace_param_flag_)
-                {
-                    _trace_param_ = "{\"trace_param_over_max_len\":true}";
-                }
-                TARS_TRACE(pSptd->getTraceKey(ServantProxyThreadData::TraceContext::EST_CS), TRACE_ANNOTATION_CS, ServerConfig::Application + "." + ServerConfig::ServerName, tars_name(), "handleXzer", 0, _trace_param_, "");
-            }
-
-            std::map<string, string> _mStatus;
-            shared_ptr<tars::ResponsePacket> rep = tars_invoke(tars::TARSNORMAL,"handleXzer", _os, context, _mStatus);
-            if(pResponseContext)
-            {
-                pResponseContext->swap(rep->context);
-            }
-
-            tars::TarsInputStream<tars::BufferReader> _is;
-            _is.setBuffer(rep->sBuffer);
-            if (pSptd && pSptd->_traceCall)
-            {
-                string _trace_param_;
-                int _trace_param_flag_ = pSptd->needTraceParam(ServantProxyThreadData::TraceContext::EST_CR, _is.size());
-                if (ServantProxyThreadData::TraceContext::ENP_NORMAL == _trace_param_flag_)
-                {
-                    tars::JsonValueObjPtr _p_ = new tars::JsonValueObj();
-                    _trace_param_ = tars::TC_Json::writeValue(_p_);
-                }
-                else if(ServantProxyThreadData::TraceContext::ENP_OVERMAXLEN == _trace_param_flag_)
-                {
-                    _trace_param_ = "{\"trace_param_over_max_len\":true}";
-                }
-                TARS_TRACE(pSptd->getTraceKey(ServantProxyThreadData::TraceContext::EST_CR), TRACE_ANNOTATION_CR, ServerConfig::Application + "." + ServerConfig::ServerName, tars_name(), "handleXzer", 0, _trace_param_, "");
-            }
-
-        }
-
-        void async_handleXzer(HelloPrxCallbackPtr callback,const std::string &str,const map<string, string>& context = TARS_CONTEXT())
-        {
-            tars::TarsOutputStream<tars::BufferWriterVector> _os;
-            _os.write(str, 1);
-            std::map<string, string> _mStatus;
-            ServantProxyThreadData *pSptd = ServantProxyThreadData::getData();
-            if (pSptd && pSptd->_traceCall)
-            {
-                pSptd->newSpan();
-                string _trace_param_;
-                int _trace_param_flag_ = pSptd->needTraceParam(ServantProxyThreadData::TraceContext::EST_CS, _os.getLength());
-                if (ServantProxyThreadData::TraceContext::ENP_NORMAL == _trace_param_flag_)
-                {
-                    tars::JsonValueObjPtr _p_ = new tars::JsonValueObj();
-                    _p_->value["str"] = tars::JsonOutput::writeJson(str);
-                    _trace_param_ = tars::TC_Json::writeValue(_p_);
-                }
-                else if(ServantProxyThreadData::TraceContext::ENP_OVERMAXLEN == _trace_param_flag_)
-                {
-                    _trace_param_ = "{\"trace_param_over_max_len\":true}";
-                }
-                TARS_TRACE(pSptd->getTraceKey(ServantProxyThreadData::TraceContext::EST_CS), TRACE_ANNOTATION_CS, ServerConfig::Application + "." + ServerConfig::ServerName, tars_name(), "handleXzer", 0, _trace_param_, "");
-            }
-            tars_invoke_async(tars::TARSNORMAL,"handleXzer", _os, context, _mStatus, callback);
-        }
-        
-        tars::Future< HelloPrxCallbackPromise::PromisehandleXzerPtr > promise_async_handleXzer(const std::string &str,const map<string, string>& context)
-        {
-            tars::Promise< HelloPrxCallbackPromise::PromisehandleXzerPtr > promise;
-            HelloPrxCallbackPromisePtr callback = new HelloPrxCallbackPromise(promise);
-
-            tars::TarsOutputStream<tars::BufferWriterVector> _os;
-            _os.write(str, 1);
-            std::map<string, string> _mStatus;
-            tars_invoke_async(tars::TARSNORMAL,"handleXzer", _os, context, _mStatus, callback);
-
-            return promise.getFuture();
-        }
-
-        void coro_handleXzer(HelloCoroPrxCallbackPtr callback,const std::string &str,const map<string, string>& context = TARS_CONTEXT())
-        {
-            tars::TarsOutputStream<tars::BufferWriterVector> _os;
-            _os.write(str, 1);
-            std::map<string, string> _mStatus;
-            tars_invoke_async(tars::TARSNORMAL,"handleXzer", _os, context, _mStatus, callback, true);
-        }
-
-        tars::Int32 sayHello(const std::string & name,const map<string, string> &context = TARS_CONTEXT(),map<string, string> * pResponseContext = NULL)
-        {
-            tars::TarsOutputStream<tars::BufferWriterVector> _os;
-            _os.write(name, 1);
-            ServantProxyThreadData *pSptd = ServantProxyThreadData::getData();
-            if (pSptd && pSptd->_traceCall)
-            {
-                pSptd->newSpan();
-                string _trace_param_;
-                int _trace_param_flag_ = pSptd->needTraceParam(ServantProxyThreadData::TraceContext::EST_CS, _os.getLength());
-                if (ServantProxyThreadData::TraceContext::ENP_NORMAL == _trace_param_flag_)
-                {
-                    tars::JsonValueObjPtr _p_ = new tars::JsonValueObj();
-                    _p_->value["name"] = tars::JsonOutput::writeJson(name);
-                    _trace_param_ = tars::TC_Json::writeValue(_p_);
-                }
-                else if(ServantProxyThreadData::TraceContext::ENP_OVERMAXLEN == _trace_param_flag_)
-                {
-                    _trace_param_ = "{\"trace_param_over_max_len\":true}";
-                }
-                TARS_TRACE(pSptd->getTraceKey(ServantProxyThreadData::TraceContext::EST_CS), TRACE_ANNOTATION_CS, ServerConfig::Application + "." + ServerConfig::ServerName, tars_name(), "sayHello", 0, _trace_param_, "");
-            }
-
-            std::map<string, string> _mStatus;
-            shared_ptr<tars::ResponsePacket> rep = tars_invoke(tars::TARSNORMAL,"sayHello", _os, context, _mStatus);
-            if(pResponseContext)
-            {
-                pResponseContext->swap(rep->context);
-            }
-
-            tars::TarsInputStream<tars::BufferReader> _is;
-            _is.setBuffer(rep->sBuffer);
-            tars::Int32 _ret;
-            _is.read(_ret, 0, true);
-            if (pSptd && pSptd->_traceCall)
-            {
-                string _trace_param_;
-                int _trace_param_flag_ = pSptd->needTraceParam(ServantProxyThreadData::TraceContext::EST_CR, _is.size());
-                if (ServantProxyThreadData::TraceContext::ENP_NORMAL == _trace_param_flag_)
-                {
-                    tars::JsonValueObjPtr _p_ = new tars::JsonValueObj();
-                    _p_->value[""] = tars::JsonOutput::writeJson(_ret);
-                    _trace_param_ = tars::TC_Json::writeValue(_p_);
-                }
-                else if(ServantProxyThreadData::TraceContext::ENP_OVERMAXLEN == _trace_param_flag_)
-                {
-                    _trace_param_ = "{\"trace_param_over_max_len\":true}";
-                }
-                TARS_TRACE(pSptd->getTraceKey(ServantProxyThreadData::TraceContext::EST_CR), TRACE_ANNOTATION_CR, ServerConfig::Application + "." + ServerConfig::ServerName, tars_name(), "sayHello", 0, _trace_param_, "");
-            }
-
-            return _ret;
-        }
-
-        void async_sayHello(HelloPrxCallbackPtr callback,const std::string &name,const map<string, string>& context = TARS_CONTEXT())
-        {
-            tars::TarsOutputStream<tars::BufferWriterVector> _os;
-            _os.write(name, 1);
-            std::map<string, string> _mStatus;
-            ServantProxyThreadData *pSptd = ServantProxyThreadData::getData();
-            if (pSptd && pSptd->_traceCall)
-            {
-                pSptd->newSpan();
-                string _trace_param_;
-                int _trace_param_flag_ = pSptd->needTraceParam(ServantProxyThreadData::TraceContext::EST_CS, _os.getLength());
-                if (ServantProxyThreadData::TraceContext::ENP_NORMAL == _trace_param_flag_)
-                {
-                    tars::JsonValueObjPtr _p_ = new tars::JsonValueObj();
-                    _p_->value["name"] = tars::JsonOutput::writeJson(name);
-                    _trace_param_ = tars::TC_Json::writeValue(_p_);
-                }
-                else if(ServantProxyThreadData::TraceContext::ENP_OVERMAXLEN == _trace_param_flag_)
-                {
-                    _trace_param_ = "{\"trace_param_over_max_len\":true}";
-                }
-                TARS_TRACE(pSptd->getTraceKey(ServantProxyThreadData::TraceContext::EST_CS), TRACE_ANNOTATION_CS, ServerConfig::Application + "." + ServerConfig::ServerName, tars_name(), "sayHello", 0, _trace_param_, "");
-            }
-            tars_invoke_async(tars::TARSNORMAL,"sayHello", _os, context, _mStatus, callback);
-        }
-        
-        tars::Future< HelloPrxCallbackPromise::PromisesayHelloPtr > promise_async_sayHello(const std::string &name,const map<string, string>& context)
-        {
-            tars::Promise< HelloPrxCallbackPromise::PromisesayHelloPtr > promise;
-            HelloPrxCallbackPromisePtr callback = new HelloPrxCallbackPromise(promise);
-
-            tars::TarsOutputStream<tars::BufferWriterVector> _os;
-            _os.write(name, 1);
-            std::map<string, string> _mStatus;
-            tars_invoke_async(tars::TARSNORMAL,"sayHello", _os, context, _mStatus, callback);
-
-            return promise.getFuture();
-        }
-
-        void coro_sayHello(HelloCoroPrxCallbackPtr callback,const std::string &name,const map<string, string>& context = TARS_CONTEXT())
-        {
-            tars::TarsOutputStream<tars::BufferWriterVector> _os;
-            _os.write(name, 1);
-            std::map<string, string> _mStatus;
-            tars_invoke_async(tars::TARSNORMAL,"sayHello", _os, context, _mStatus, callback, true);
-        }
-
         tars::Int32 test(const map<string, string> &context = TARS_CONTEXT(),map<string, string> * pResponseContext = NULL)
         {
             tars::TarsOutputStream<tars::BufferWriterVector> _os;
@@ -897,104 +395,6 @@ namespace TestApp
     {
     public:
         virtual ~Hello(){}
-        virtual void handleXzer(const std::string & str,tars::TarsCurrentPtr current) = 0;
-        static void async_response_handleXzer(tars::TarsCurrentPtr current)
-        {
-            size_t _rsp_len_ = 0;
-            if (current->getRequestVersion() == TUPVERSION )
-            {
-                UniAttribute<tars::BufferWriterVector, tars::BufferReader>  tarsAttr;
-                tarsAttr.setVersion(current->getRequestVersion());
-
-                vector<char> sTupResponseBuffer;
-                tarsAttr.encode(sTupResponseBuffer);
-                current->sendResponse(tars::TARSSERVERSUCCESS, sTupResponseBuffer);
-                _rsp_len_ = sTupResponseBuffer.size();
-            }
-            else if (current->getRequestVersion() == JSONVERSION)
-            {
-                tars::JsonValueObjPtr _p = new tars::JsonValueObj();
-                vector<char> sJsonResponseBuffer;
-                tars::TC_Json::writeValue(_p, sJsonResponseBuffer);
-                current->sendResponse(tars::TARSSERVERSUCCESS, sJsonResponseBuffer);
-                _rsp_len_ = sJsonResponseBuffer.size();
-            }
-            else
-            {
-                tars::TarsOutputStream<tars::BufferWriterVector> _os;
-                current->sendResponse(tars::TARSSERVERSUCCESS, _os.getByteBuffer());
-                _rsp_len_ = _os.getLength();
-            }
-            if (current->isTraced())
-            {
-                string _trace_param_;
-                int _trace_param_flag_ = ServantProxyThreadData::needTraceParam(ServantProxyThreadData::TraceContext::EST_SS, current->getTraceKey(), _rsp_len_);
-                if (ServantProxyThreadData::TraceContext::ENP_NORMAL == _trace_param_flag_)
-                {
-                    tars::JsonValueObjPtr _p_ = new tars::JsonValueObj();
-                    _trace_param_ = tars::TC_Json::writeValue(_p_);
-                }
-                else if(ServantProxyThreadData::TraceContext::ENP_OVERMAXLEN == _trace_param_flag_)
-                {
-                    _trace_param_ = "{\"trace_param_over_max_len\":true}";
-                }
-                TARS_TRACE(current->getTraceKey(), TRACE_ANNOTATION_SS, "", ServerConfig::Application + "." + ServerConfig::ServerName, "handleXzer", 0, _trace_param_, "");
-            }
-
-        }
-
-        virtual tars::Int32 sayHello(const std::string & name,tars::TarsCurrentPtr current) = 0;
-        static void async_response_sayHello(tars::TarsCurrentPtr current, tars::Int32 _ret)
-        {
-            size_t _rsp_len_ = 0;
-            if (current->getRequestVersion() == TUPVERSION )
-            {
-                UniAttribute<tars::BufferWriterVector, tars::BufferReader>  tarsAttr;
-                tarsAttr.setVersion(current->getRequestVersion());
-                tarsAttr.put("", _ret);
-                tarsAttr.put("tars_ret", _ret);
-
-                vector<char> sTupResponseBuffer;
-                tarsAttr.encode(sTupResponseBuffer);
-                current->sendResponse(tars::TARSSERVERSUCCESS, sTupResponseBuffer);
-                _rsp_len_ = sTupResponseBuffer.size();
-            }
-            else if (current->getRequestVersion() == JSONVERSION)
-            {
-                tars::JsonValueObjPtr _p = new tars::JsonValueObj();
-                _p->value["tars_ret"] = tars::JsonOutput::writeJson(_ret);
-                vector<char> sJsonResponseBuffer;
-                tars::TC_Json::writeValue(_p, sJsonResponseBuffer);
-                current->sendResponse(tars::TARSSERVERSUCCESS, sJsonResponseBuffer);
-                _rsp_len_ = sJsonResponseBuffer.size();
-            }
-            else
-            {
-                tars::TarsOutputStream<tars::BufferWriterVector> _os;
-                _os.write(_ret, 0);
-
-                current->sendResponse(tars::TARSSERVERSUCCESS, _os.getByteBuffer());
-                _rsp_len_ = _os.getLength();
-            }
-            if (current->isTraced())
-            {
-                string _trace_param_;
-                int _trace_param_flag_ = ServantProxyThreadData::needTraceParam(ServantProxyThreadData::TraceContext::EST_SS, current->getTraceKey(), _rsp_len_);
-                if (ServantProxyThreadData::TraceContext::ENP_NORMAL == _trace_param_flag_)
-                {
-                    tars::JsonValueObjPtr _p_ = new tars::JsonValueObj();
-                    _p_->value[""] = tars::JsonOutput::writeJson(_ret);
-                    _trace_param_ = tars::TC_Json::writeValue(_p_);
-                }
-                else if(ServantProxyThreadData::TraceContext::ENP_OVERMAXLEN == _trace_param_flag_)
-                {
-                    _trace_param_ = "{\"trace_param_over_max_len\":true}";
-                }
-                TARS_TRACE(current->getTraceKey(), TRACE_ANNOTATION_SS, "", ServerConfig::Application + "." + ServerConfig::ServerName, "sayHello", 0, _trace_param_, "");
-            }
-
-        }
-
         virtual tars::Int32 test(tars::TarsCurrentPtr current) = 0;
         static void async_response_test(tars::TarsCurrentPtr current, tars::Int32 _ret)
         {
@@ -1052,187 +452,14 @@ namespace TestApp
         {
             static ::std::string __TestApp__Hello_all[]=
             {
-                "handleXzer",
-                "sayHello",
                 "test"
             };
 
-            pair<string*, string*> r = equal_range(__TestApp__Hello_all, __TestApp__Hello_all+3, _current->getFuncName());
+            pair<string*, string*> r = equal_range(__TestApp__Hello_all, __TestApp__Hello_all+1, _current->getFuncName());
             if(r.first == r.second) return tars::TARSSERVERNOFUNCERR;
             switch(r.first - __TestApp__Hello_all)
             {
                 case 0:
-                {
-                    tars::TarsInputStream<tars::BufferReader> _is;
-                    _is.setBuffer(_current->getRequestBuffer());
-                    std::string str;
-                    if (_current->getRequestVersion() == TUPVERSION)
-                    {
-                        UniAttribute<tars::BufferWriterVector, tars::BufferReader>  tarsAttr;
-                        tarsAttr.setVersion(_current->getRequestVersion());
-                        tarsAttr.decode(_current->getRequestBuffer());
-                        tarsAttr.get("str", str);
-                    }
-                    else if (_current->getRequestVersion() == JSONVERSION)
-                    {
-                        tars::JsonValueObjPtr _jsonPtr = tars::JsonValueObjPtr::dynamicCast(tars::TC_Json::getValue(_current->getRequestBuffer()));
-                        tars::JsonInput::readJson(str, _jsonPtr->value["str"], true);
-                    }
-                    else
-                    {
-                        _is.read(str, 1, true);
-                    }
-                    ServantProxyThreadData *pSptd = ServantProxyThreadData::getData();
-                    if (pSptd && pSptd->_traceCall)
-                    {
-                        string _trace_param_;
-                        int _trace_param_flag_ = pSptd->needTraceParam(ServantProxyThreadData::TraceContext::EST_SR, _is.size());
-                        if (ServantProxyThreadData::TraceContext::ENP_NORMAL == _trace_param_flag_)
-                        {
-                            tars::JsonValueObjPtr _p_ = new tars::JsonValueObj();
-                            _p_->value["str"] = tars::JsonOutput::writeJson(str);
-                            _trace_param_ = tars::TC_Json::writeValue(_p_);
-                        }
-                        else if(ServantProxyThreadData::TraceContext::ENP_OVERMAXLEN == _trace_param_flag_)
-                        {
-                            _trace_param_ = "{\"trace_param_over_max_len\":true}";
-                        }
-                        TARS_TRACE(pSptd->getTraceKey(ServantProxyThreadData::TraceContext::EST_SR), TRACE_ANNOTATION_SR, "", ServerConfig::Application + "." + ServerConfig::ServerName, "handleXzer", 0, _trace_param_, "");
-                    }
-
-                    handleXzer(str, _current);
-                    if(_current->isResponse())
-                    {
-                        if (_current->getRequestVersion() == TUPVERSION)
-                        {
-                            UniAttribute<tars::BufferWriterVector, tars::BufferReader>  tarsAttr;
-                            tarsAttr.setVersion(_current->getRequestVersion());
-                            tarsAttr.encode(_sResponseBuffer);
-                        }
-                        else if (_current->getRequestVersion() == JSONVERSION)
-                        {
-                            tars::JsonValueObjPtr _p = new tars::JsonValueObj();
-                            tars::TC_Json::writeValue(_p, _sResponseBuffer);
-                        }
-                        else
-                        {
-                            tars::TarsOutputStream<tars::BufferWriterVector> _os;
-                            _os.swap(_sResponseBuffer);
-                        }
-                        if (pSptd && pSptd->_traceCall)
-                        {
-                            string _trace_param_;
-                            int _trace_param_flag_ = pSptd->needTraceParam(ServantProxyThreadData::TraceContext::EST_SS, _sResponseBuffer.size());
-                            if (ServantProxyThreadData::TraceContext::ENP_NORMAL == _trace_param_flag_)
-                            {
-                                tars::JsonValueObjPtr _p_ = new tars::JsonValueObj();
-                                _trace_param_ = tars::TC_Json::writeValue(_p_);
-                            }
-                            else if(ServantProxyThreadData::TraceContext::ENP_OVERMAXLEN == _trace_param_flag_)
-                            {
-                                _trace_param_ = "{\"trace_param_over_max_len\":true}";
-                            }
-                            TARS_TRACE(pSptd->getTraceKey(ServantProxyThreadData::TraceContext::EST_SS), TRACE_ANNOTATION_SS, "", ServerConfig::Application + "." + ServerConfig::ServerName, "handleXzer", 0, _trace_param_, "");
-                        }
-
-                    }
-                    else if(pSptd && pSptd->_traceCall)
-                    {
-                        _current->setTrace(pSptd->_traceCall, pSptd->getTraceKey(ServantProxyThreadData::TraceContext::EST_SS));
-                    }
-
-                    return tars::TARSSERVERSUCCESS;
-
-                }
-                case 1:
-                {
-                    tars::TarsInputStream<tars::BufferReader> _is;
-                    _is.setBuffer(_current->getRequestBuffer());
-                    std::string name;
-                    if (_current->getRequestVersion() == TUPVERSION)
-                    {
-                        UniAttribute<tars::BufferWriterVector, tars::BufferReader>  tarsAttr;
-                        tarsAttr.setVersion(_current->getRequestVersion());
-                        tarsAttr.decode(_current->getRequestBuffer());
-                        tarsAttr.get("name", name);
-                    }
-                    else if (_current->getRequestVersion() == JSONVERSION)
-                    {
-                        tars::JsonValueObjPtr _jsonPtr = tars::JsonValueObjPtr::dynamicCast(tars::TC_Json::getValue(_current->getRequestBuffer()));
-                        tars::JsonInput::readJson(name, _jsonPtr->value["name"], true);
-                    }
-                    else
-                    {
-                        _is.read(name, 1, true);
-                    }
-                    ServantProxyThreadData *pSptd = ServantProxyThreadData::getData();
-                    if (pSptd && pSptd->_traceCall)
-                    {
-                        string _trace_param_;
-                        int _trace_param_flag_ = pSptd->needTraceParam(ServantProxyThreadData::TraceContext::EST_SR, _is.size());
-                        if (ServantProxyThreadData::TraceContext::ENP_NORMAL == _trace_param_flag_)
-                        {
-                            tars::JsonValueObjPtr _p_ = new tars::JsonValueObj();
-                            _p_->value["name"] = tars::JsonOutput::writeJson(name);
-                            _trace_param_ = tars::TC_Json::writeValue(_p_);
-                        }
-                        else if(ServantProxyThreadData::TraceContext::ENP_OVERMAXLEN == _trace_param_flag_)
-                        {
-                            _trace_param_ = "{\"trace_param_over_max_len\":true}";
-                        }
-                        TARS_TRACE(pSptd->getTraceKey(ServantProxyThreadData::TraceContext::EST_SR), TRACE_ANNOTATION_SR, "", ServerConfig::Application + "." + ServerConfig::ServerName, "sayHello", 0, _trace_param_, "");
-                    }
-
-                    tars::Int32 _ret = sayHello(name, _current);
-                    if(_current->isResponse())
-                    {
-                        if (_current->getRequestVersion() == TUPVERSION)
-                        {
-                            UniAttribute<tars::BufferWriterVector, tars::BufferReader>  tarsAttr;
-                            tarsAttr.setVersion(_current->getRequestVersion());
-                            tarsAttr.put("", _ret);
-                            tarsAttr.put("tars_ret", _ret);
-                            tarsAttr.encode(_sResponseBuffer);
-                        }
-                        else if (_current->getRequestVersion() == JSONVERSION)
-                        {
-                            tars::JsonValueObjPtr _p = new tars::JsonValueObj();
-                            _p->value["tars_ret"] = tars::JsonOutput::writeJson(_ret);
-                            tars::TC_Json::writeValue(_p, _sResponseBuffer);
-                        }
-                        else
-                        {
-                            tars::TarsOutputStream<tars::BufferWriterVector> _os;
-                            _os.write(_ret, 0);
-                            _os.swap(_sResponseBuffer);
-                        }
-                        if (pSptd && pSptd->_traceCall)
-                        {
-                            string _trace_param_;
-                            int _trace_param_flag_ = pSptd->needTraceParam(ServantProxyThreadData::TraceContext::EST_SS, _sResponseBuffer.size());
-                            if (ServantProxyThreadData::TraceContext::ENP_NORMAL == _trace_param_flag_)
-                            {
-                                tars::JsonValueObjPtr _p_ = new tars::JsonValueObj();
-                                _p_->value[""] = tars::JsonOutput::writeJson(_ret);
-                                _trace_param_ = tars::TC_Json::writeValue(_p_);
-                            }
-                            else if(ServantProxyThreadData::TraceContext::ENP_OVERMAXLEN == _trace_param_flag_)
-                            {
-                                _trace_param_ = "{\"trace_param_over_max_len\":true}";
-                            }
-                            TARS_TRACE(pSptd->getTraceKey(ServantProxyThreadData::TraceContext::EST_SS), TRACE_ANNOTATION_SS, "", ServerConfig::Application + "." + ServerConfig::ServerName, "sayHello", 0, _trace_param_, "");
-                        }
-
-                    }
-                    else if(pSptd && pSptd->_traceCall)
-                    {
-                        _current->setTrace(pSptd->_traceCall, pSptd->getTraceKey(ServantProxyThreadData::TraceContext::EST_SS));
-                    }
-
-                    return tars::TARSSERVERSUCCESS;
-
-                }
-                case 2:
                 {
                     tars::TarsInputStream<tars::BufferReader> _is;
                     _is.setBuffer(_current->getRequestBuffer());

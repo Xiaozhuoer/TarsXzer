@@ -37,10 +37,7 @@ public:
        coro();
        return 0;
     }
-    virtual int sayHello(const std::string &name, tars::TarsCurrentPtr current);
-    virtual void handleXzer(const std::string &str, tars::TarsCurrentPtr current);
     void sync();
-    void sendXzer(const std::string &str);
     void async();
     void coro();
 

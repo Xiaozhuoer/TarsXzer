@@ -2,14 +2,12 @@
 #include "servant/Application.h"
 #include <thread>
 #include <mutex>
+
+# define QUESTION "who are you"
+
 using namespace std;
 using namespace tars;
 
-
-std::mutex mu;
-std::mutex strXzerMu;
-std::string strXzer;
-int flag;
 //////////////////////////////////////////////////////
 void HelloImp::initialize()
 {
@@ -22,52 +20,47 @@ void HelloImp::destroy()
     //destroy servant here:
     //...
 }
-//////////////////////////////////////////////////////
-int HelloImp::sayHello(const std::string &name, tars::TarsCurrentPtr current)
-{
-    return 0;
-}
+
+/////////////////////////////////////////////////////
 
 void HelloImp::sync()
-{ 
-    std::string str = "who are you";
-    std::thread t1(&HelloImp::sendXzer,this,str);
-    t1.join();
-    strXzerMu.lock();
-    TLOG_DEBUG("Hello " << strXzer << endl);
-    strXzerMu.unlock();
-}
+{
+	std::string name;
+	try
+	{
+	    _xPrx->handleHello(QUESTION, name);
+	}
+	catch(exception& ex)
+	{
+	    TLOG_DEBUG( "exception: " << ex.what() << endl);
+	}
+	
+	TLOG_DEBUG("sync hello "<< name << endl);
 
-void HelloImp::sendXzer(const std::string &str)
-{    
-    strXzerMu.lock();
-    strXzer = _xPrx->handleHello(str);
-    strXzerMu.unlock();    
-}
-
-void HelloImp::handleXzer(const std::string &str, tars::TarsCurrentPtr current)
-{   
-     TLOG_DEBUG("handleXzer "<< endl);
-     strXzerMu.lock();
-     strXzer = str;
-     strXzerMu.unlock();
 }
 
 /////////////////////////////////////////////////////
 class XzerCallback : public XzerPrxCallback
 {
 public:
-    void callback_handleHello(const std::string& ret)
+    
+	virtual void callback_handleHello(tars::Int32 ret, const std::string& name)
     {
-	TLOG_DEBUG("callback_handleHello_async hello "<< ret << endl);
+        TLOG_DEBUG("callback_handleHello_async hello "<< name << endl);
     }
+    
+	virtual void callback_handleHello_exception(tars::Int32 ret)
+	{
+        TLOG_DEBUG("callback_handleHello_async_exception iRet = "<< ret << endl);
+	}
+
 };
 
 void HelloImp::async()
 {
-    std::string str = "who are you";
+
     XzerPrxCallbackPtr cb = new XzerCallback();
-    _xPrx->async_handleHello(cb,"who are you");
+	_xPrx->async_handleHello(cb,QUESTION);
 
 }
 
@@ -76,21 +69,30 @@ void HelloImp::async()
 class XzerCoroCallback : public XzerCoroPrxCallback
 {
 public:
-    void callback_handleHello(const std::string& ret)
+
+    virtual void callback_handleHello(tars::Int32 ret, const std::string& name)
     {
-        TLOG_DEBUG("callback_handleHello_coro hello "<< ret << endl);
+        TLOG_DEBUG("callback_handleHello_coro hello "<< name << endl);
     }
+
+    virtual void callback_handleHello_exception(tars::Int32 ret)
+    {
+        TLOG_DEBUG("callback_handleHello_coro_exception iRet = "<< ret << endl);
+    } 
+
 };
 
 
 void HelloImp::coro()
 {
-    std::string str = "who are you";
+
     CoroParallelBasePtr cPtr = new CoroParallelBase(1);
-    XzerCoroPrxCallbackPtr cb = new XzerCoroCallback();
-    cb->setCoroParallelBasePtr(cPtr);
-    _xPrx->coro_handleHello(cb,"who are you");
-    coroWhenAll(cPtr);
     
+	XzerCoroPrxCallbackPtr cb = new XzerCoroCallback();
+    cb->setCoroParallelBasePtr(cPtr);
+	
+	_xPrx->coro_handleHello(cb,QUESTION);
+    
+	coroWhenAll(cPtr);
 }
 
